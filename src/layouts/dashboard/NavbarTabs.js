@@ -23,6 +23,7 @@ export default function NavbarTabs() {
     <Tabs value={value} onChange={handleChange} aria-label="icon label tabs example">
       <LinkTab label="Dashboard" iconPosition="start" href="/dashboard" {...a11yProps(0)} />
       <LinkTab label="Device" iconPosition="start" href="/devices" {...a11yProps(1)} />
+      <LinkTab label="Configuration" iconPosition="start" href="/configuration" {...a11yProps(2)} />
     </Tabs>
   );
 }

@@ -12,6 +12,8 @@ import ChangePassword from './pages/ChangePassword';
 import Device from './pages/Device';
 import DeviceInfo from './pages/DeviceInfo';
 import AddDevice from './pages/AddDevice';
+import Configuration from './pages/Configuration';
+import AddEditConfiguration from './pages/AddEditConfiguration';
 
 // ----------------------------------------------------------------------
 
@@ -26,7 +28,10 @@ export default function Router({ isLoggedIn }) {
         { path: 'change-password', element: <ChangePassword /> },
         { path: 'devices', element: <Device /> },
         { path: 'add-device', element: <AddDevice /> },
-        { path: 'info/:id', element: <DeviceInfo /> }
+        { path: 'info/:id', element: <DeviceInfo /> },
+        { path: 'configuration', element: <Configuration /> },
+        { path: 'add-configuration', element: <AddEditConfiguration /> },
+        { path: 'edit-configuration/:id', element: <AddEditConfiguration /> }
       ]
     },
     {

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useFormik, Form, FormikProvider } from 'formik';
 import {
@@ -17,7 +17,7 @@ import {
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import * as Yup from 'yup';
-import { addDeviceAPI } from '../common/api-endpoints';
+import { addDeviceAPI, configurationAPI } from '../common/api-endpoints';
 import Page from '../components/Page';
 import HTTPService from '../common/httpService';
 import toaster from '../common/toastMessage';
@@ -25,13 +25,20 @@ import toaster from '../common/toastMessage';
 export default function AddDevice() {
   const navigate = useNavigate();
   const [phase, setPhase] = useState(1);
+  const [configuration, setConfiguration] = useState([]);
 
   const addDeviceSchema = Yup.object().shape({
     deviceId: Yup.string().trim().required('Device ID is required'),
     name: Yup.string().trim().required('Device Name is required'),
     location: Yup.string().trim().required('Location is required'),
-    configuration: Yup.number().integer().required('Configuration is required')
+    configuration: Yup.string().required('Configuration is required')
   });
+
+  useEffect(() => {
+    HTTPService.get(configurationAPI, { pagination: false }).then((res) => {
+      setConfiguration(res.data);
+    });
+  }, [setConfiguration]);
 
   const formik = useFormik({
     initialValues: {
@@ -103,9 +110,11 @@ export default function AddDevice() {
                     error={Boolean(touched.configuration && errors.configuration)}
                     helperText={touched.configuration && errors.configuration}
                   >
-                    <MenuItem value={5}>5KVA</MenuItem>
-                    <MenuItem value={10}>10KVA</MenuItem>
-                    <MenuItem value={15}>15KVA</MenuItem>
+                    {configuration.map((config, index) => (
+                      <MenuItem key={index} value={config._id}>
+                        {config.attribute}KVA
+                      </MenuItem>
+                    ))}
                   </TextField>
 
                   <FormControl>

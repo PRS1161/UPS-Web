@@ -11,3 +11,5 @@ export const addDeviceAPI = '/device/create';
 export const getDeviceAPI = '/device/get';
 
 export const dashboardAPI = '/dashboard';
+
+export const configurationAPI = '/configuration';
