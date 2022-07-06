@@ -117,9 +117,9 @@ export default function Configuration() {
                         <TableRow hover key={_id} tabIndex={-1}>
                           <TableCell align="left">{attribute}KVA</TableCell>
                           <TableCell align="left">
-                            {`{${Object.entries(settings).map(([key, val]) => {
-                              return ` ${key}: ${val} `;
-                            })}}`}
+                            {settings.map((s, i) => {
+                              return <li key={i}>{s.key}</li>;
+                            })}
                           </TableCell>
                           <TableCell>
                             <IconButton
