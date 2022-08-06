@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { localStorageKeys, API_URL } from './constants';
+import { localStorageKeys, REACT_APP_API_URL } from './constants';
 import toaster from './toastMessage';
 import { onUserLogOut } from '../store/auth/action';
 import store from '../store/index';
@@ -11,7 +11,7 @@ const errorInterceptor = (errorResponse) => {
   toaster.error(message);
 };
 
-axiosInstance.defaults.baseURL = API_URL;
+axiosInstance.defaults.baseURL = REACT_APP_API_URL;
 axiosInstance.interceptors.request.use(
   (req) => {
     const isLoggedIn = localStorage.getItem(localStorageKeys.isLoggedIn);

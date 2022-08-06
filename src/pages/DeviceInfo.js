@@ -9,7 +9,12 @@ import Page from '../components/Page';
 import HTTPService from '../common/httpService';
 import Iconify from '../components/Iconify';
 import { getDeviceAPI } from '../common/api-endpoints';
-import { API_URL, toastMessages, minMainVoltage, minBatteryVoltage } from '../common/constants';
+import {
+  REACT_APP_API_URL,
+  toastMessages,
+  minMainVoltage,
+  minBatteryVoltage
+} from '../common/constants';
 // ----------------------------------------------------------------------
 
 const RootStyle = styled(Card)(({ theme }) => ({
@@ -107,7 +112,7 @@ export default function DeviceInfo() {
   const [info, setInfo] = useState({});
   const [deviceData, setDeviceData] = useState(DEVICE_DATA);
   const { id } = useParams();
-  let socket = io.io(API_URL || '', { path: '/socket.io' });
+  let socket = io.io(REACT_APP_API_URL || '', { path: '/socket.io' });
 
   const listenSocket = () => {
     socket.on('connect', () => {
