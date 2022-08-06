@@ -8,7 +8,7 @@ import * as io from 'socket.io-client';
 import Page from '../components/Page';
 import HTTPService from '../common/httpService';
 import Iconify from '../components/Iconify';
-import { getDeviceAPI } from '../common/api-endpoints';
+import { deviceAPI } from '../common/api-endpoints';
 import {
   REACT_APP_API_URL,
   toastMessages,
@@ -156,7 +156,7 @@ export default function DeviceInfo() {
   };
 
   useEffect(() => {
-    HTTPService.get(getDeviceAPI, { id })
+    HTTPService.get(deviceAPI, { id, info: true })
       .then((res) => {
         setInfo(res.data);
         if (res.data.data) {

@@ -13,7 +13,8 @@ import {
   Container,
   Typography,
   TableContainer,
-  TablePagination
+  TablePagination,
+  IconButton
 } from '@mui/material';
 // components
 import Page from '../components/Page';
@@ -22,7 +23,7 @@ import Scrollbar from '../components/Scrollbar';
 import Iconify from '../components/Iconify';
 import SearchNotFound from '../components/SearchNotFound';
 import HTTPService from '../common/httpService';
-import { getDeviceAPI } from '../common/api-endpoints';
+import { deviceAPI } from '../common/api-endpoints';
 import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
 import { paginationKeys } from '../common/constants';
 
@@ -33,7 +34,8 @@ const TABLE_HEAD = [
   { id: 'name', label: 'Name', alignRight: false },
   { id: 'configuration', label: 'Configuration', alignRight: false },
   { id: 'location', label: 'Location', alignRight: false },
-  { id: 'status', label: 'Status', alignRight: false }
+  { id: 'status', label: 'Status', alignRight: false },
+  { id: '' }
 ];
 
 // ----------------------------------------------------------------------
@@ -69,8 +71,13 @@ export default function Device() {
     });
   };
 
+  const handleClick = (event, id) => {
+    event.stopPropagation();
+    navigate(`/edit-device/${id}`, { replace: true });
+  };
+
   const getDevices = useCallback(() => {
-    HTTPService.get(getDeviceAPI, { ...pagination }).then((res) => {
+    HTTPService.get(deviceAPI, { ...pagination }).then((res) => {
       setResponse(res);
     });
   }, [pagination]);
@@ -127,10 +134,14 @@ export default function Device() {
                               {sentenceCase(status === 0 ? 'inactive' : 'active')}
                             </Label>
                           </TableCell>
-
-                          {/* <TableCell align="right">
-                            <UserMoreMenu />
-                          </TableCell> */}
+                          <TableCell>
+                            <IconButton
+                              onClick={(e) => handleClick(e, _id)}
+                              sx={{ color: 'text.primary' }}
+                            >
+                              <Iconify icon="ic:baseline-edit" width={24} height={24} />
+                            </IconButton>
+                          </TableCell>
                         </TableRow>
                       );
                     })}

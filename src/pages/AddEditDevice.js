@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useFormik, Form, FormikProvider } from 'formik';
 import {
   Stack,
@@ -17,22 +17,40 @@ import {
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import * as Yup from 'yup';
-import { addDeviceAPI, configurationAPI } from '../common/api-endpoints';
+import { deviceAPI, configurationAPI } from '../common/api-endpoints';
 import Page from '../components/Page';
 import HTTPService from '../common/httpService';
 import toaster from '../common/toastMessage';
 
-export default function AddDevice() {
+export default function AddEditDevice() {
   const navigate = useNavigate();
+  const { id } = useParams();
   const [phase, setPhase] = useState(1);
+  const [initialValues, setInitialValues] = useState({
+    deviceId: '',
+    name: '',
+    location: '',
+    configuration: ''
+  });
   const [configuration, setConfiguration] = useState([]);
 
-  const addDeviceSchema = Yup.object().shape({
+  const addEditDeviceSchema = Yup.object().shape({
     deviceId: Yup.string().trim().required('Device ID is required'),
     name: Yup.string().trim().required('Device Name is required'),
     location: Yup.string().trim().required('Location is required'),
     configuration: Yup.string().required('Configuration is required')
   });
+
+  useEffect(() => {
+    if (id) {
+      HTTPService.get(deviceAPI, { id })
+        .then((res) => {
+          setInitialValues(res.data);
+          setPhase(res.data.phase);
+        })
+        .catch((e) => console.log(e));
+    }
+  }, [id]);
 
   useEffect(() => {
     HTTPService.get(configurationAPI, { pagination: false }).then((res) => {
@@ -41,39 +59,58 @@ export default function AddDevice() {
   }, [setConfiguration]);
 
   const formik = useFormik({
-    initialValues: {
-      deviceId: '',
-      name: '',
-      location: '',
-      configuration: ''
-    },
-    validationSchema: addDeviceSchema,
+    initialValues,
+    enableReinitialize: true,
+    validationSchema: addEditDeviceSchema,
     onSubmit: (values, { setSubmitting }) => {
       values.phase = phase;
+      if (id) {
+        const data = {
+          name: values.name,
+          location: values.location,
+          configuration: values.configuration,
+          phase: values.phase,
+          id
+        };
+        values = data;
+      }
+      console.log(values);
       handleOnSubmit(values, setSubmitting);
     }
   });
 
   const handleOnSubmit = (data, setSubmitting) => {
-    HTTPService.post(addDeviceAPI, data)
-      .then((res) => {
-        setSubmitting(false);
-        toaster.success(res.message);
-        navigate('/devices', { replace: true });
-      })
-      .catch(() => {
-        setSubmitting(false);
-      });
+    if (id) {
+      HTTPService.put(deviceAPI, data)
+        .then((res) => {
+          setSubmitting(false);
+          toaster.success(res.message);
+          navigate('/devices', { replace: true });
+        })
+        .catch(() => {
+          setSubmitting(false);
+        });
+    } else {
+      HTTPService.post(deviceAPI, data)
+        .then((res) => {
+          setSubmitting(false);
+          toaster.success(res.message);
+          navigate('/devices', { replace: true });
+        })
+        .catch(() => {
+          setSubmitting(false);
+        });
+    }
   };
 
   const { errors, touched, handleSubmit, isSubmitting, getFieldProps } = formik;
 
   return (
-    <Page title="Add Device | DATA MONITORING SYSTEM">
+    <Page title={`${id ? 'Edit' : 'Add'} Device | DATA MONITORING SYSTEM`}>
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            Add Device
+            {id ? 'Edit' : 'Add'} Device
           </Typography>
         </Stack>
         <Card>
@@ -87,6 +124,7 @@ export default function AddDevice() {
                     {...getFieldProps('deviceId')}
                     error={Boolean(touched.deviceId && errors.deviceId)}
                     helperText={touched.deviceId && errors.deviceId}
+                    disabled={Boolean(id) || false}
                   />
                   <TextField
                     fullWidth

@@ -6,9 +6,7 @@ export const changePasswordAPI = '/change-password';
 
 export const profileAPI = '/profile';
 
-export const addDeviceAPI = '/device/create';
-
-export const getDeviceAPI = '/device/get';
+export const deviceAPI = '/device';
 
 export const dashboardAPI = '/dashboard';
 
