@@ -49,10 +49,10 @@ const DEVICE_DATA = [
     icon: <Iconify icon="fluent:top-speed-24-filled" width={32} height={32} />
   },
   {
-    key: 'currnetLoad',
-    label: 'Currnet Load',
+    key: 'currentLoad',
+    label: 'Current Load',
     value: '0',
-    measurement: '%',
+    measurement: 'A',
     icon: <Iconify icon="emojione-monotone:high-voltage" width={32} height={32} />
   },
   {
@@ -73,7 +73,7 @@ const DEVICE_DATA = [
     key: 'batteryVoltage',
     label: 'Battery Voltage',
     value: '0',
-    measurement: '%',
+    measurement: 'A',
     icon: <Iconify icon="tabler:battery-charging" width={32} height={32} />
   },
   {
