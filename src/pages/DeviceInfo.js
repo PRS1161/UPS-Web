@@ -73,21 +73,21 @@ const DEVICE_DATA = [
     key: 'batteryVoltage',
     label: 'Battery Voltage',
     value: '0',
-    measurement: 'A',
+    measurement: 'V',
     icon: <Iconify icon="tabler:battery-charging" width={32} height={32} />
   },
   {
     key: 'currentBattery',
-    label: 'Remain Battery',
+    label: 'Charging Current',
     value: '0',
-    measurement: '%',
+    measurement: 'A',
     icon: <Iconify icon="tabler:battery-2" width={32} height={32} />
   },
   {
     key: 'dischargeBattery',
-    label: 'Current Battery Discharge',
+    label: 'Discharging Current',
     value: '0',
-    measurement: '%',
+    measurement: 'A',
     icon: <Iconify icon="tabler:battery-charging-2" width={32} height={32} />
   }
 ];
