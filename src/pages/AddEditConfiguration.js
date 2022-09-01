@@ -28,7 +28,21 @@ export default function AddEditConfiguration() {
   const configurationSchema = Yup.object().shape({
     attribute: Yup.number().integer().required('Attribute is required'),
     settings: Yup.array().of(
-      Yup.object().shape({ key: Yup.number().integer().required('Setting is required') })
+      Yup.object().shape({
+        key: Yup.number()
+          .positive()
+          .test(
+            'is-decimal',
+            'The amount should be a decimal with maximum four digits after comma',
+            (val) => {
+              if (val !== undefined) {
+                return /^\d+(\.\d{0,4})?$/.test(val);
+              }
+              return true;
+            }
+          )
+          .required('Setting is required')
+      })
     )
   });
 
