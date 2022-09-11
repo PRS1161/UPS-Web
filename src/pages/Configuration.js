@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 // material
 import {
@@ -18,6 +18,7 @@ import {
 // components
 import Page from '../components/Page';
 import Scrollbar from '../components/Scrollbar';
+import ConfirmDialog from '../components/ConfirmDialog';
 import Iconify from '../components/Iconify';
 import SearchNotFound from '../components/SearchNotFound';
 import HTTPService from '../common/httpService';
@@ -31,7 +32,7 @@ import toaster from '../common/toastMessage';
 const TABLE_HEAD = [
   { id: 'attribute', label: 'Attribute', alignRight: false },
   { id: 'settings', label: 'Settings', alignRight: false },
-  { id: '' }
+  { id: 'actions', label: 'Actions' }
 ];
 
 // ----------------------------------------------------------------------
@@ -39,11 +40,25 @@ const TABLE_HEAD = [
 export default function Configuration() {
   const [pagination, setPagination] = useState({ ...paginationKeys });
   const [response, setResponse] = useState({});
+  const [id, setId] = useState(null);
+  const [status, setStatus] = useState(false);
   const navigate = useNavigate();
+  const childRef = useRef(null);
 
   useEffect(() => {
     getConfiguration();
   }, [pagination]);
+
+  useEffect(() => {
+    if (id && status === true) {
+      HTTPService.delete(`${configurationAPI}/${id}`).then((res) => {
+        toaster.success(res.message);
+        getConfiguration();
+      });
+      setStatus(false);
+    }
+    setId(null);
+  }, [status]);
 
   const handleChangePage = (event, newPage) => {
     setPagination({
@@ -68,10 +83,8 @@ export default function Configuration() {
   };
 
   const deleteConfiguration = (id) => {
-    HTTPService.delete(`${configurationAPI}/${id}`).then((res) => {
-      toaster.success(res.message);
-      getConfiguration();
-    });
+    childRef.current.handleClickOpen();
+    setId(id);
   };
 
   const getConfiguration = useCallback(() => {
@@ -103,7 +116,7 @@ export default function Configuration() {
 
         <Card>
           <UserListToolbar filterName={pagination.search} onFilterName={handleFilterByName} />
-
+          <ConfirmDialog ref={childRef} setStatus={setStatus} />
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
               <Table>

@@ -74,7 +74,6 @@ export default function AddEditDevice() {
         };
         values = data;
       }
-      console.log(values);
       handleOnSubmit(values, setSubmitting);
     }
   });

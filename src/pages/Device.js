@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { sentenceCase } from 'change-case';
 // material
@@ -20,13 +20,14 @@ import {
 import Page from '../components/Page';
 import Label from '../components/Label';
 import Scrollbar from '../components/Scrollbar';
+import ConfirmDialog from '../components/ConfirmDialog';
 import Iconify from '../components/Iconify';
 import SearchNotFound from '../components/SearchNotFound';
 import HTTPService from '../common/httpService';
 import { deviceAPI } from '../common/api-endpoints';
 import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
 import { paginationKeys } from '../common/constants';
-
+import toaster from '../common/toastMessage';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
@@ -35,7 +36,7 @@ const TABLE_HEAD = [
   { id: 'configuration', label: 'Configuration', alignRight: false },
   { id: 'location', label: 'Location', alignRight: false },
   { id: 'status', label: 'Status', alignRight: false },
-  { id: '' }
+  { id: 'actions', label: 'Actions' }
 ];
 
 // ----------------------------------------------------------------------
@@ -43,11 +44,25 @@ const TABLE_HEAD = [
 export default function Device() {
   const [pagination, setPagination] = useState({ ...paginationKeys });
   const [response, setResponse] = useState({});
+  const [id, setId] = useState(null);
+  const [status, setStatus] = useState(false);
   const navigate = useNavigate();
+  const childRef = useRef(null);
 
   useEffect(() => {
     getDevices();
   }, [pagination]);
+
+  useEffect(() => {
+    if (id && status === true) {
+      HTTPService.delete(`${deviceAPI}/${id}`).then((res) => {
+        toaster.success(res.message);
+        getDevices();
+      });
+      setStatus(false);
+    }
+    setId(null);
+  }, [status]);
 
   const handleChangePage = (event, newPage) => {
     setPagination({
@@ -74,6 +89,12 @@ export default function Device() {
   const handleClick = (event, id) => {
     event.stopPropagation();
     navigate(`/edit-device/${id}`, { replace: true });
+  };
+
+  const handleOnDelete = (event, id) => {
+    event.stopPropagation();
+    childRef.current.handleClickOpen();
+    setId(id);
   };
 
   const getDevices = useCallback(() => {
@@ -105,7 +126,7 @@ export default function Device() {
 
         <Card>
           <UserListToolbar filterName={pagination.search} onFilterName={handleFilterByName} />
-
+          <ConfirmDialog ref={childRef} setStatus={setStatus} />
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
               <Table>
@@ -140,6 +161,12 @@ export default function Device() {
                               sx={{ color: 'text.primary' }}
                             >
                               <Iconify icon="ic:baseline-edit" width={24} height={24} />
+                            </IconButton>
+                            <IconButton
+                              onClick={(e) => handleOnDelete(e, _id)}
+                              sx={{ color: 'text.primary' }}
+                            >
+                              <Iconify icon="ic:baseline-delete" width={24} height={24} />
                             </IconButton>
                           </TableCell>
                         </TableRow>
