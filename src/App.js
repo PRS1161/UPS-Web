@@ -1,6 +1,6 @@
 import { connect, useSelector } from 'react-redux';
 import { Toaster } from 'react-hot-toast';
-import { ToastContainer, Slide } from 'react-toastify';
+import { ToastContainer, Flip } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Router from './routes';
 import ThemeConfig from './theme';
@@ -16,12 +16,13 @@ function App() {
     <ThemeConfig>
       <Toaster />
       <ToastContainer
-        autoClose={false}
+        autoClose={2000}
         position="top-center"
         newestOnTop
         draggable={false}
         theme="colored"
-        transition={Slide}
+        transition={Flip}
+        limit={3}
       />
       <ScrollToTop />
       <GlobalStyles />
